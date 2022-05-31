@@ -12,7 +12,6 @@ type Transfer = {
   tokenId: number;
 }
 
-
 // info
 export const getNftInfo = async (nftAddress: string) => {
   const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
@@ -125,4 +124,10 @@ export const getNftHolders = async (nftAddress: string) => {
     .sort((a, b) => a.tokenId - b.tokenId)
 
   return { holders: holders, count: holders.length };
+}
+
+export const isNFT = async (nftAddress: string) => {
+
+
+  return { isNFT: true }
 }

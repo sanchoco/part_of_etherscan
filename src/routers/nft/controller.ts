@@ -2,7 +2,7 @@ import { Router } from "express";
 import { validateRequestParam } from "../../utils/validateRequestParam";
 import { wrapAsync } from "../../utils/wrapAsync";
 import { NftAddressParam } from "./dto";
-import { getNftHolders, getNftInfo, getNftOwners, getNftTransfers, getOpenseaInfo } from "./service";
+import { getNftHolders, getNftInfo, getNftOwners, getNftTransfers, getOpenseaInfo, isNFT } from "./service";
 
 const router = Router();
 
@@ -48,6 +48,14 @@ router.get('/:nftAddress/holders', wrapAsync(async (req, res) => {
 
   const result = await getNftHolders(nftAddress);
   
+  return res.status(200).json(result);
+}));
+
+router.get('/:nftAddress/check', wrapAsync(async (req, res) => {
+  const { nftAddress } = await validateRequestParam(NftAddressParam, req.params);
+
+  const result = await isNFT(nftAddress);
+
   return res.status(200).json(result);
 }));
 
