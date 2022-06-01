@@ -35,7 +35,7 @@ OPENSEA_API_KEY= (optional)
   - ``totalSupply``: NFT 총 발행 수량
   
 - **GET /nft/:nftAddress/transfers**
-  - NFT 이동 내역 조회
+  - NFT 이동 내역 조회 (블록 번호 오름차순)
   - 리턴값: ```{ transfers: [{ blockNumber, transactionHash, from, to, tokenId }] }```
   - ``blockNumber``: 블록 번호
   - ``transactionHash``: 트랜젝션 해시
@@ -81,7 +81,7 @@ OPENSEA_API_KEY= (optional)
   - ``totalSupply``: 토큰 총 발행 수량
   
 - **GET /ft/:ftAddress/transfers**
-  - 토큰 이동 내역 조회(블록 번호 오름차순)
+  - 토큰 이동 내역 조회 (블록 번호 오름차순)
   - 리턴값: ```{ transfers: [{ blockNumber, transactionHash, from, to, tokenId }] }```
   - ``blockNumber``: 블록 번호
   - ``transactionHash``: 트랜젝션 해시
@@ -93,7 +93,7 @@ OPENSEA_API_KEY= (optional)
 
 
 - **GET /ft/:ftAddress/balances**
-  - 토큰 잔액 조회(잔액 내림차순)
+  - 토큰 잔액 조회 (잔액 내림차순)
   - 리턴값: ```{ holders:[{ address, balance }] }```
   - ``address``: 소유자 주소
   - ``balance``: 보유 잔액
