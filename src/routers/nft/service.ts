@@ -168,14 +168,14 @@ export const getNftHolders = async (nftAddress: string) => {
   for (const transfer of transfers) {
     items[transfer.tokenId] = transfer.to;
   }
-  const itemCount = new Object();
+  const tokenCount = new Object();
   for (const tokenId of Object.keys(items)) {
     const owner = items[tokenId];
-    itemCount[owner] ? itemCount[owner] += 1 : itemCount[owner] = 1;
+    tokenCount[owner] ? tokenCount[owner] += 1 : tokenCount[owner] = 1;
   }
-  const holders = Object.keys(itemCount).map((address) => {
-    return { address, itemCount: itemCount[address] };
-  }).sort((a, b) => b.itemCount - a.itemCount);
+  const holders = Object.keys(tokenCount).map((address) => {
+    return { address, tokenCount: tokenCount[address] };
+  }).sort((a, b) => b.tokenCount - a.tokenCount);
 
   return { holders, count: holders.length };
 }

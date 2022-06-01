@@ -48,9 +48,9 @@ OPENSEA_API_KEY= (optional)
 
 - **GET /nft/:nftAddress/holders**
   - NFT 홀더 조회 (보유 수량별 내림차순)
-  - 리턴값: ```{ holders:[{ address, itemCount }] }```
+  - 리턴값: ```{ holders:[{ address, tokenCount }] }```
   - ``address``: 소유자 주소
-  - ``itemCount``: 보유 수량
+  - ``tokenCount``: 보유 수량
   - ex) BAYC(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
     <img width="1583" alt="bayc-holders" src="https://user-images.githubusercontent.com/58046372/171361570-c4e3cb16-cfa9-4774-8774-88602dfcef85.png">
 
