@@ -1,4 +1,4 @@
-# 이더스캔 기능 부분 구현
+# 이더스캔 부분 구현
 > 온 체인 데이터만 활용
 
 
@@ -43,6 +43,8 @@ OPENSEA_API_KEY= (optional)
   - ``to``: 받은 사람
   - ``tokenId``: NFT 토큰 번호
   - ex) BAYC(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
+    <img width="1841" alt="bayc-transfers" src="https://user-images.githubusercontent.com/58046372/171361394-684b541b-da95-4b01-be6b-ac6e3fc15498.png">
+
 
 - **GET /nft/:nftAddress/holders**
   - NFT 홀더 조회 (수량별 내림차순)
@@ -50,6 +52,8 @@ OPENSEA_API_KEY= (optional)
   - ``address``: 소유자 주소
   - ``itemCount``: 보유 수량
   - ex) BAYC(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
+    <img width="1583" alt="bayc-holders" src="https://user-images.githubusercontent.com/58046372/171361570-c4e3cb16-cfa9-4774-8774-88602dfcef85.png">
+
 
   
 - **GET /nft/:nftAddress/owners**
@@ -58,6 +62,8 @@ OPENSEA_API_KEY= (optional)
   - ``tokenId``: NFT 토큰 번호
   - ``owner``: 소유자 주소
   - ex) BAYC(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
+    <img width="595" alt="bayc-owners" src="https://user-images.githubusercontent.com/58046372/171361597-d7224e80-441c-4fb3-a16c-531874165abf.png">
+
 
 #### FT(Fungible token)
 - **GET /ft/:ftAddress**
@@ -77,6 +83,8 @@ OPENSEA_API_KEY= (optional)
   - ``to``: 받은 사람
   - ``tokenId``: NFT 토큰 번호
   - ex) Agrolot Token(0x72c9fb7ed19d3ce51cea5c56b3e023cd918baadf)
+    <img width="2119" alt="ft-transfer" src="https://user-images.githubusercontent.com/58046372/171361645-92f2e843-afcf-4f2e-87a3-e784155f23d8.png">
+
 
 - **GET /ft/:ftAddress/balances**
   - 토큰 잔액 조회
@@ -84,5 +92,6 @@ OPENSEA_API_KEY= (optional)
   - ``address``: 소유자 주소
   - ``balance``: 보유 잔액
   - ex) Agrolot Token(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
+    <img width="1536" alt="aglt-balance" src="https://user-images.githubusercontent.com/58046372/171361688-25763987-7dd5-4313-a449-1627ad240b5f.png">
 
 
