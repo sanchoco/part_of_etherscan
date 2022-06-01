@@ -1,14 +1,18 @@
 # 이더스캔 부분 구현
-> 온 체인 데이터만 활용
+
+### Description
+블록 체인 데이터만을 사용하여 이더스캔 기능 부분 구현
 
 
-#### .env
+### .env
 ```
 ETHEREUM_PROVIDER= (required)
 OPENSEA_API_KEY= (optional)
 ```
 
-#### Check
+
+## APIs
+### Check
 - **GET /check/:address**
   - 주소를 통한 계정 타입 확인
   - 리턴값: ```{ type: "EOA" | "FT" | "NFT" | "CONTRACT" }```
@@ -71,7 +75,7 @@ OPENSEA_API_KEY= (optional)
 
 
 
-#### FT(Fungible token)
+### FT(Fungible token)
 - **GET /ft/:ftAddress**
   - 토큰 기본 정보 확인
   - 리턴값: ```{ contractAddress, name, symbol, totalSupply }```
