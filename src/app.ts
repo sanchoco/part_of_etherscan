@@ -7,6 +7,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(mainRouter);
-app.use(errorMiddleware)
+app.use(errorMiddleware);
 
 export default app;

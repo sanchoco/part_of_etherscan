@@ -13,7 +13,7 @@ type Transfer = {
 }
 
 // info
-export const getNftInfo = async (nftAddress: string) => {
+export const getFtInfo = async (nftAddress: string) => {
   const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
   const name = await nftContract.methods.name().call();
   const symbol = await nftContract.methods.symbol().call();
@@ -23,7 +23,7 @@ export const getNftInfo = async (nftAddress: string) => {
 }
 
 // transfers
-export const getNftTransfers = async (nftAddress: string) => {
+export const getFtTransfers = async (nftAddress: string) => {
   const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
 
   const fromBlock = 0;
@@ -55,47 +55,9 @@ export const getNftTransfers = async (nftAddress: string) => {
   return { transfers: transfers.sort((a,b) => a.blockNumber - b.blockNumber) };
 }
 
-// opensea
-export const getOpenseaInfo = async (nftAddress: string) => {
-  const collectionInfo = await axios({
-    method: 'get',
-    url: `https://api.opensea.io/api/v1/asset_contract/${nftAddress}`,
-    headers: {
-      "X-API-KEY": OPENSEA_API_KEY
-    }
-  })
-
-  const slug = collectionInfo.data.collection.slug;
-  if (!slug) throw new Error('nft not found');
-
-  const collectionStat = await axios({
-    method: 'get',
-    url: `https://api.opensea.io/api/v1/collection/${slug}/stats`,
-    headers: { "X-API-KEY": OPENSEA_API_KEY }
-  });
-
-  const opensea = {
-    banner: collectionInfo.data.collection.banner_image_url,
-    image: collectionInfo.data.image_url,
-    homepage: collectionInfo.data.external_link,
-    name: collectionInfo.data.name,
-    symbol: collectionInfo.data.symbol,
-    totalSupply: collectionInfo.data.total_supply,
-    description: collectionInfo.data.description,
-    oneDayVolume: collectionStat.data.stats.one_day_volume,
-    sevenDayVolume: collectionStat.data.stats.seven_day_volume,
-    owners: collectionStat.data.stats.num_owners,
-    avgPrice: collectionStat.data.stats.average_price,
-    marketCap: collectionStat.data.stats.market_cap,
-    floorPrice: collectionStat.data.stats.floor_price
-  }
-
-  return { opensea };
-}
-
 // owners
-export const getNftOwners = async (nftAddress: string) => {
-  const { transfers } = await getNftTransfers(nftAddress);
+export const getFtOwners = async (nftAddress: string) => {
+  const { transfers } = await getFtTransfers(nftAddress);
   const items = new Object();
   for (const transfer of transfers) {
     items[transfer.tokenId] = transfer.to;
@@ -113,8 +75,8 @@ export const getNftOwners = async (nftAddress: string) => {
 }
 
 // holders
-export const getNftHolders = async (nftAddress: string) => {
-  const { transfers } = await getNftTransfers(nftAddress);
+export const getFtHolders = async (nftAddress: string) => {
+  const { transfers } = await getFtTransfers(nftAddress);
   const items = new Object();
   for (const transfer of transfers) {
     items[transfer.tokenId] = transfer.to;
