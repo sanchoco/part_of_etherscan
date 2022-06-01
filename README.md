@@ -43,7 +43,8 @@ OPENSEA_API_KEY= (optional)
   - ``to``: 받은 사람
   - ``tokenId``: NFT 토큰 번호
   - ex) BAYC(0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d)
-    <img width="2744" alt="스크린샷 2022-06-01 오후 5 35 49" src="https://user-images.githubusercontent.com/58046372/171363322-38ba4cc1-2c94-40aa-8bc2-272b395e7a2e.png">
+    <img width="3092" alt="스크린샷 2022-06-01 오후 5 50 38" src="https://user-images.githubusercontent.com/58046372/171365999-7be21a9d-229b-45b2-aef0-6f6b4c9a29e3.png">
+
 
 - **GET /nft/:nftAddress/holders**
   - NFT 홀더 조회 (보유 수량별 내림차순)
