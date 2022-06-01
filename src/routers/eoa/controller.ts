@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { validateRequestParam } from "../../utils/validateRequestParam";
 import { wrapAsync } from "../../utils/wrapAsync";
-import { getNftOwners } from "../nft/service";
 import { AddressParam } from "./dto";
 import { getEoaInfo } from "./service";
 

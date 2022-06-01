@@ -3,6 +3,10 @@ import ERC721_ABI  from '../../abi/ERC721.json';
 import { AbiItem } from "web3-utils";
 import axios from "axios";
 import { OPENSEA_API_KEY } from "../../config";
+import { EventData } from 'web3-eth-contract'
+import NodeCache from "node-cache";
+
+const serviceCache = new NodeCache();
 
 type Transfer = {
   blockNumber: number;
@@ -11,6 +15,8 @@ type Transfer = {
   to: string;
   tokenId: number;
 }
+
+type TransferReturnType = { transfers: Transfer[] }
 
 // info
 export const getNftInfo = async (nftAddress: string) => {
@@ -22,37 +28,83 @@ export const getNftInfo = async (nftAddress: string) => {
   return { contractAddress: nftAddress, name, symbol, totalSupply };
 }
 
-// transfers
-export const getNftTransfers = async (nftAddress: string) => {
+const getEventLogs = async (nftAddress: string, start: number, end: number) => {
   const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
-
-  const fromBlock = 0;
-  const toBlock = await web3.eth.getBlockNumber();
   const transfers: Transfer[] = [];
+  const searchRange = [{ start, end }];
 
-  let start = fromBlock;
-  let end = toBlock;
-  while (start <= end) {
-    
+  while (searchRange.length) {
+    const { start, end } = searchRange.pop();
     try {
+      // common
       const events = await nftContract.getPastEvents('Transfer', { fromBlock: start, toBlock: end });
-      transfers.push(...events.map((event) => ({
+      const parsedEvents = events.map((event: EventData) => ({
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,
-        from: event.returnValues.from,
-        to: event.returnValues.to,
+        from: event.returnValues.from as string,
+        to: event.returnValues.to as string,
         tokenId: parseInt(event.returnValues.tokenId)
-      })));
-      start = end + 1;
-      end = toBlock;
-      if (start >= end) break;
-    } catch (error){
-      let mid =  parseInt(`${(start + end) / 2}`);
-      end = mid;
+      })).sort((a,b) => a.blockNumber - b.blockNumber);
+      transfers.push(...parsedEvents);
+    } catch (err) {
+      if (err.message !== 'Returned error: query returned more than 10000 results')
+      throw new Error(err.message);
+      if (start === end) break;
+      const mid =  parseInt(`${(start + end) / 2}`);
+      searchRange.push({ start: mid + 1, end: end });
+      searchRange.push({ start: start, end: mid });
     }
   }
+  return transfers;
+}
 
-  return { transfers: transfers.sort((a,b) => a.blockNumber - b.blockNumber) };
+const getPunkEventLogs = async (nftAddress: string, start: number, end: number) => {
+  const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
+  const transfers: Transfer[] = [];
+  const searchRange = [{ start, end }];
+
+  while (searchRange.length) {
+    const { start, end } = searchRange.pop();
+    try {
+      // common
+      const events = await nftContract.getPastEvents('PunkTransfer', { fromBlock: start, toBlock: end });
+      const parsedEvents = events.map((event: EventData) => ({
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        from: event.returnValues.from as string,
+        to: event.returnValues.to as string,
+        tokenId: parseInt(event.returnValues.punkIndex)
+      })).sort((a,b) => a.blockNumber - b.blockNumber);
+      transfers.push(...parsedEvents);
+    } catch (err) {
+      if (err.message !== 'Returned error: query returned more than 10000 results')
+      throw new Error(err.message);
+      if (start === end) break;
+      const mid =  parseInt(`${(start + end) / 2}`);
+      searchRange.push({ start: mid + 1, end: end });
+      searchRange.push({ start: start, end: mid });
+    }
+  }
+  return transfers;
+}
+
+// transfers
+export const getNftTransfers = async (nftAddress: string): Promise<TransferReturnType> => {
+  const cacheKey = `nft_transfer_${nftAddress.toLowerCase()}`;
+  const cache = serviceCache.get(cacheKey) as any;
+
+  const fromBlock = cache ? cache.lastBlock + 1 : 0;
+  const toBlock = await web3.eth.getBlockNumber();
+  
+  const isPunk = nftAddress.toLowerCase() === '0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb';
+  const transfers = isPunk
+    ? await getPunkEventLogs(nftAddress, fromBlock, toBlock) // crypto punk
+    : await getEventLogs(nftAddress, fromBlock, toBlock); // ERC721
+
+    const allTransfers = cache ? [...cache.transfers, ...transfers] : transfers;
+    const result = { transfers: allTransfers, lastBlock: toBlock };
+    serviceCache.set(cacheKey, result);
+    return result;
 }
 
 // opensea
@@ -93,8 +145,22 @@ export const getOpenseaInfo = async (nftAddress: string) => {
   return { opensea };
 }
 
-// owners
+// holders
 export const getNftOwners = async (nftAddress: string) => {
+  const { transfers } = await getNftTransfers(nftAddress);
+  const items = new Object();
+  for (const transfer of transfers) {
+    items[transfer.tokenId] = transfer.to;
+  }
+  const holders = Object.keys(items)
+    .map((tokenId) => ({ tokenId: parseInt(tokenId), owner: items[tokenId] }))
+    .sort((a, b) => a.tokenId - b.tokenId)
+
+  return { holders: holders, count: holders.length };
+}
+
+// owners
+export const getNftHolders = async (nftAddress: string) => {
   const { transfers } = await getNftTransfers(nftAddress);
   const items = new Object();
   for (const transfer of transfers) {
@@ -112,16 +178,3 @@ export const getNftOwners = async (nftAddress: string) => {
   return { owners, count: owners.length };
 }
 
-// holders
-export const getNftHolders = async (nftAddress: string) => {
-  const { transfers } = await getNftTransfers(nftAddress);
-  const items = new Object();
-  for (const transfer of transfers) {
-    items[transfer.tokenId] = transfer.to;
-  }
-  const holders = Object.keys(items)
-    .map((tokenId) => ({ tokenId: parseInt(tokenId), owner: items[tokenId] }))
-    .sort((a, b) => a.tokenId - b.tokenId)
-
-  return { holders: holders, count: holders.length };
-}

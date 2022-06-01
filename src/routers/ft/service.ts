@@ -1,8 +1,7 @@
 import { web3 } from "../../provider/web3"
-import ERC721_ABI  from '../../abi/ERC721.json';
+import ERC20_ABI  from '../../abi/ERC20.json';
 import { AbiItem } from "web3-utils";
 import axios from "axios";
-import { OPENSEA_API_KEY } from "../../config";
 
 type Transfer = {
   blockNumber: number;
@@ -14,17 +13,17 @@ type Transfer = {
 
 // info
 export const getFtInfo = async (nftAddress: string) => {
-  const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
-  const name = await nftContract.methods.name().call();
-  const symbol = await nftContract.methods.symbol().call();
-  const totalSupply = await nftContract.methods.totalSupply().call();
+  const ftContract = new web3.eth.Contract(ERC20_ABI as AbiItem[], nftAddress);
+  const name = await ftContract.methods.name().call();
+  const symbol = await ftContract.methods.symbol().call();
+  const totalSupply = await ftContract.methods.totalSupply().call();
 
   return { contractAddress: nftAddress, name, symbol, totalSupply };
 }
 
 // transfers
 export const getFtTransfers = async (nftAddress: string) => {
-  const nftContract = new web3.eth.Contract(ERC721_ABI as AbiItem[], nftAddress);
+  const ftContract = new web3.eth.Contract(ERC20_ABI as AbiItem[], nftAddress);
 
   const fromBlock = 0;
   const toBlock = await web3.eth.getBlockNumber();
@@ -35,7 +34,7 @@ export const getFtTransfers = async (nftAddress: string) => {
   while (start <= end) {
     
     try {
-      const events = await nftContract.getPastEvents('Transfer', { fromBlock: start, toBlock: end });
+      const events = await ftContract.getPastEvents('Transfer', { fromBlock: start, toBlock: end });
       transfers.push(...events.map((event) => ({
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,

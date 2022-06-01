@@ -1,9 +1,8 @@
 import { Router } from "express";
 import { validateRequestParam } from "../../utils/validateRequestParam";
 import { wrapAsync } from "../../utils/wrapAsync";
-import { getNftOwners } from "../nft/service";
 import { FtAddressParam } from "./dto";
-import { getFtHolders, getFtInfo, getFtTransfers } from "./service";
+import { getFtHolders, getFtInfo, getFtOwners, getFtTransfers } from "./service";
 
 const router = Router();
 
@@ -29,7 +28,7 @@ router.get('/:ftAddress/transfers', wrapAsync(async (req, res) => {
 router.get('/:ftAddress/owners', wrapAsync(async (req, res) => {
   const { ftAddress } = await validateRequestParam(FtAddressParam, req.params);
 
-  const result = await getNftOwners(ftAddress);
+  const result = await getFtOwners(ftAddress);
 
   return res.status(200).json(result);
 }));
