@@ -2,7 +2,7 @@ import { Router } from "express";
 import { validateRequestParam } from "../../utils/validateRequestParam";
 import { wrapAsync } from "../../utils/wrapAsync";
 import { FtAddressParam } from "./dto";
-import { getFtHolders, getFtInfo, getFtOwners, getFtTransfers } from "./service";
+import { getFtBalances, getFtInfo, getFtTransfers } from "./service";
 
 const router = Router();
 
@@ -25,21 +25,13 @@ router.get('/:ftAddress/transfers', wrapAsync(async (req, res) => {
 }));
 
 // owners
-router.get('/:ftAddress/owners', wrapAsync(async (req, res) => {
+router.get('/:ftAddress/balances', wrapAsync(async (req, res) => {
   const { ftAddress } = await validateRequestParam(FtAddressParam, req.params);
 
-  const result = await getFtOwners(ftAddress);
+  const result = await getFtBalances(ftAddress);
 
   return res.status(200).json(result);
 }));
 
-// holders
-router.get('/:ftAddress/holders', wrapAsync(async (req, res) => {
-  const { ftAddress } = await validateRequestParam(FtAddressParam, req.params);
-
-  const result = await getFtHolders(ftAddress);
-  
-  return res.status(200).json(result);
-}));
 
 export const ftController = router;

@@ -3,7 +3,7 @@ import ERC721_ABI  from '../../abi/ERC721.json';
 import { AbiItem } from "web3-utils";
 import axios from "axios";
 import { OPENSEA_API_KEY } from "../../config";
-import { EventData } from 'web3-eth-contract'
+import { EventData } from 'web3-eth-contract';
 import NodeCache from "node-cache";
 
 const serviceCache = new NodeCache();
@@ -38,6 +38,7 @@ const getEventLogs = async (nftAddress: string, start: number, end: number) => {
     try {
       // common
       const events = await nftContract.getPastEvents('Transfer', { fromBlock: start, toBlock: end });
+      if (!events) continue;
       const parsedEvents = events.map((event: EventData) => ({
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,
@@ -68,6 +69,7 @@ const getPunkEventLogs = async (nftAddress: string, start: number, end: number) 
     try {
       // common
       const events = await nftContract.getPastEvents('PunkTransfer', { fromBlock: start, toBlock: end });
+      if (!events) continue;
       const parsedEvents = events.map((event: EventData) => ({
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,
@@ -152,11 +154,11 @@ export const getNftOwners = async (nftAddress: string) => {
   for (const transfer of transfers) {
     items[transfer.tokenId] = transfer.to;
   }
-  const holders = Object.keys(items)
+  const owners = Object.keys(items)
     .map((tokenId) => ({ tokenId: parseInt(tokenId), owner: items[tokenId] }))
     .sort((a, b) => a.tokenId - b.tokenId)
 
-  return { holders: holders, count: holders.length };
+  return { owners: owners, count: owners.length };
 }
 
 // owners
@@ -171,10 +173,10 @@ export const getNftHolders = async (nftAddress: string) => {
     const owner = items[tokenId];
     itemCount[owner] ? itemCount[owner] += 1 : itemCount[owner] = 1;
   }
-  const owners = Object.keys(itemCount).map((address) => {
+  const holders = Object.keys(itemCount).map((address) => {
     return { address, itemCount: itemCount[address] };
   }).sort((a, b) => b.itemCount - a.itemCount);
 
-  return { owners, count: owners.length };
+  return { holders, count: holders.length };
 }
 
