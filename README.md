@@ -10,6 +10,12 @@ ETHEREUM_PROVIDER= (required)
 OPENSEA_API_KEY= (optional)
 ```
 
+### Run
+```
+ npm install // 1. package install
+ npm run build // 2. ts => js
+ npm run start // 3. server start
+```
 
 ## APIs
 ### Check
